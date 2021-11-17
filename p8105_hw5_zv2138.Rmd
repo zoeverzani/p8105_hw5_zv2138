@@ -113,8 +113,8 @@ research_data = tibble(
 tidy_research = 
   research_data %>% 
   unnest(data) %>% 
-  mutate(research_arm = ifelse(str_detect(files, "con"), "control arm", "experimental arm")) %>% 
-  mutate(subject_id = as.character(as.numeric(substr(files, 5, 6)))) %>% 
+  mutate(research_arm = ifelse(str_detect(files, "con"), "Control Arm", "Experimental Arm")) %>% 
+  mutate(subject_id = (substr(files, 5, 6))) %>% 
   relocate(research_arm, subject_id) %>% 
   select(-files) %>% 
   pivot_longer(
@@ -123,7 +123,23 @@ tidy_research =
     names_prefix = "week_",
     values_to = "data"
   )
+```
 
+Graphing the Data
+```{r}
+
+tidy_research %>% 
+  ggplot(aes(x = week, y = data, group = subject_id, color = subject_id)) +
+  geom_point() +
+  geom_line() + 
+  facet_grid(. ~ research_arm) +
+  theme(legend.position = "bottom", plot.title = element_text(hjust = 0.5)) +
+  labs(
+    title = "Observations For Each Subject Over Study Duration",
+    x = "Week Number",
+    y = "Data",
+    color = "Subject ID"
+  )
 ```
 
 # Problem 3
