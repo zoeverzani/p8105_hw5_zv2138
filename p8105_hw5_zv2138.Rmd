@@ -103,10 +103,27 @@ homicides_df %>%
 
 ```
 
-## Problem 2
+# Problem 2
 ```{r}
-tibble(
-  files = list.files("./zip_data/"))
+research_data = tibble(
+  files = list.files("./zip_data/"),
+  data = map(str_c("./zip_data/",files), read_csv)
+)
+
+tidy_research = 
+  research_data %>% 
+  unnest(data) %>% 
+  mutate(research_arm = ifelse(str_detect(files, "con"), "control arm", "experimental arm")) %>% 
+  mutate(subject_id = as.character(as.numeric(substr(files, 5, 6)))) %>% 
+  relocate(research_arm, subject_id) %>% 
+  select(-files) %>% 
+  pivot_longer(
+    week_1:week_8,
+    names_to = "week",
+    names_prefix = "week_",
+    values_to = "data"
+  )
+
 ```
 
 # Problem 3
