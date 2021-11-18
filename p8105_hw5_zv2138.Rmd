@@ -104,12 +104,16 @@ homicides_df %>%
 ```
 
 # Problem 2
-```{r}
+Importing the Data 
+```{r, message = FALSE }
 research_data = tibble(
   files = list.files("./zip_data/"),
   data = map(str_c("./zip_data/",files), read_csv)
 )
+```
 
+Tidying the Data 
+```{r}
 tidy_research = 
   research_data %>% 
   unnest(data) %>% 
@@ -125,9 +129,9 @@ tidy_research =
   )
 ```
 
-Graphing the Data
-```{r}
 
+Spaghetti Plot
+```{r}
 tidy_research %>% 
   ggplot(aes(x = week, y = data, group = subject_id, color = subject_id)) +
   geom_point() +
@@ -141,9 +145,11 @@ tidy_research %>%
     color = "Subject ID"
   )
 ```
+From the above spaghetti plot we can see over the 8 week student the subjects in the control data values vary very little. Most of the data values fall between ~0 and ~2.5. However, in the experimental arm over the period of the study individuals increase in data values as the time increases. We see a positive linear trend - with each increase in week we see an increase in data values across the patient population. In the experimental arm the data ranges from ~0 to ~7.5. 
 
 # Problem 3
-```{r}
+Importing the Data
+```{r import data}
 set.seed(10)
 
 iris_with_missing = iris %>% 
@@ -151,7 +157,8 @@ iris_with_missing = iris %>%
   mutate(Species = as.character(Species))
 ```
 
-```{r}
+Creating the Function
+```{r function}
 fill_in_missing = function(x) {
   if(is.numeric(x)){
     ifelse(is.na(x) == T, mean(x, na.rm = T), x)
@@ -160,7 +167,10 @@ fill_in_missing = function(x) {
     ifelse(is.na(x) == T, "virginica", x)
   }
 }
+```
 
-iris_complete = map_df(iris_with_missing, fill_in_missing) 
+Using the Function to fill in Missing Values
+```{r}
+iris_complete = map_df(iris_with_missing, fill_in_missing)
 ```
 
